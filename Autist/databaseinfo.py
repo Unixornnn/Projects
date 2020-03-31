@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import urllib.request
-import re
+import requests
 
 skin_url = "lolskinlistgenerator.com"
 
@@ -12,13 +12,12 @@ def gather_champions():
 
 def gather_skins():
     try:
-        skin_page = urllib.request.urlopen(skin_url)
+        skin_page = get(skin_url)
     except:
         print("The url {} could not be accessed".format(skin_url))
     soup = BeautifulSoup(skin_page, 'html.parser')
-
-    regex = re.compile('skinclass')
-    content_lis = soup.find_all('li', attrs={'class': regex})
-    print(content_lis)
+    skin_containers = soup.find_all('div',class_ = 'champ-skins champ-skins--cards')
+    for i in skin_containers:
+        i.a.
 
     pass

@@ -1,4 +1,5 @@
 import sys
+import re
 
 #import the test needed doing and the file
 test_name = sys.argv[1]
@@ -19,26 +20,54 @@ restricted = list(restricted_raw.split(","))
 #####################################
 
 count = 0
+expanded_nodes = []
+results = []
 
+#returns the child nodes of n given the previously changed number y [index] ensuring we dont reduce from 0 and increase from 9
 def return_children(n, y):
     if y == 0:
-        return [n - 100, n + 100, n - 10, n + 10, n - 1, n + 1]
+        if re.findall("0\d\d",n) or re.findall("9\d\d",n):
+            if re.findall("\d0\d",n) or re.findall("\d9\d",n):
+                if re.findall("\d\d0",n) or re.findall("\d\d9",n):
+                    #We have 1, 2, 3 values invalid
+                    pass
+                else:
+                    #we 1, 2 values invalid
+                    pass
+            else:
+                #we have invalid changed values for first 1 value, need to continue for 3rd value
+                if re.findall("\d\d0",n) or re.findall("\d\d9",n):
+                    pass
+                else:
+                    #we have 1st value invalid
+                    pass
+        else:
+            pass
+        values = [n - 100, n + 100, n - 10, n + 10, n - 1, n + 1]
     elif y == 1:
         #do not increase or decrease the first number
-        return [n - 10, n + 10, n - 1, n + 10]
+        values = [n - 10, n + 10, n - 1, n + 10]
     elif y == 2:
         #do not increase or decrease the second number
-        return [n - 100, n + 100, n - 1, n + 1]
+        values = [n - 100, n + 100, n - 1, n + 1]
     elif y == 3:
         #do not increase or decrease the third number
-        return [n - 100, n + 100, n - 10, n + 10]
+        values = [n - 100, n + 100, n - 10, n + 10]
+    node_comparison = values.insert(0,n)
+    expanded_nodes.append(node_comparison)
+    return values
 
 if test_name == "BFS":
     #code for BFS
-    return_children(start_value, 0)
+    current_node_expanded = return_children(start_value, 0)
+    count += 1
+    while count <= 1000:
+
+
+        count += 1
     pass
 elif test_name == "DFS":
-    #code for DFS
+    #code for DFS - left most and continue down until you find a repeated node
 
     pass
 elif test_name == "IDS":

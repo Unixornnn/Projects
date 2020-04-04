@@ -21,7 +21,7 @@ restricted = list(restricted_raw.split(","))
 
 count = 0
 expanded_nodes = []
-results = []
+results = [start_value.strip("\n")]
 
 #returns the child nodes of n given the previously changed number y [index] ensuring we dont reduce from 0 and increase from 9
 def return_children(n, y):
@@ -131,13 +131,51 @@ def return_children(n, y):
         else:
             node = str(int(n)+10)
             values.append(node.zfill(3))
-    expanded_nodes.append(values)
+    expanded_nodes.append((values[0],y))
     return values
 
-if test_name == "test":
-    print(return_children(start_value,0))
+def lowest_heuristic_index(x, y):
+    #retuns the index of the highest heuristic for a given set of child nodes
+    lowest_index = 0
+    lowest_value = 1000
+    i = 0
+    value = []
+    while i < len(x):
+        if x[i] in restricted:
+            value.append(1000)
+        elif (x[i],y) in expanded_nodes:
+            value.append(1000)
+        else:
+            #calculate the manhattan distance for each child node of an expanded node
+            number = str(x[i])
+            value1 = abs(int(number[0]) - int(goal[0]))
+            value2 = abs(int(number[1]) - int(goal[1]))
+            value3 = abs(int(number[2]) - int(goal[2]))
+            value.append(value1 + value2 + value3)
+        i+= 1
+    i = 0
+    while i < len(value):
+        if value[i] < lowest_value:
+            lowest_index = i
+            lowest_value = value[i]
+        elif value[i] == lowest_value:
+            lowest_index = i
+            lowest_value = value[i]
+        else:
+            pass
+        i+= 1
+    return lowest_index
 
-elif test_name == "BFS":
+def check_expanded(x,y):
+    #may be broke, need to check further before further implementation
+    #check whether this node has already been expanded, x is the value, and y is the previously changed value
+    for i in expanded_nodes:
+        if i == (x,y):
+            return True
+        else:
+            return False
+
+if test_name == "BFS":
     #code for BFS
     current_node_expanded = return_children(start_value, 0)
     count += 1
@@ -155,6 +193,24 @@ elif test_name == "IDS":
 
     pass
 elif test_name == "Greedy":
+    count = 0
+    prev_change = 0
+    while count <= 1000:
+        x = return_children(results[count], prev_change)
+        y = lowest_heuristic_index(x,prev_change)
+        changed_value = abs(int(x[y]) - int(x[0]))
+        if changed_value == 100:
+            prev_change = 1
+        elif changed_value == 10:
+            prev_change = 2
+        elif changed_value == 1:
+            prev_change = 3
+        results.append(x[y])
+        if int(x[y]) == int(goal):
+            break
+        expanded_nodes.append((x[y],prev_change))
+        count += 1
+
     #code for Greedy
 
     pass
@@ -164,7 +220,10 @@ elif test_name == "A*":
     pass
 elif test_name == "Hill-climbing":
     #code for Hill-climbing
+    #implement a value which gives the number of digits that are in the correct position, seeking to increase this number with each move, or at least not decrease
 
     pass
 else:
     print("error: the test defined is not found within this program.")
+
+print(results)

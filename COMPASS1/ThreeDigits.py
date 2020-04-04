@@ -183,11 +183,34 @@ if test_name == "BFS":
 
 
         count += 1
-    pass
+
 elif test_name == "DFS":
     #code for DFS - left most and continue down until you find a repeated node
+    count = 0
+    prev_change = 0
+    index = 1
+    while count <= 1000:
+        x = return_children(results[count], prev_change)
+        if x[index] in expanded_nodes:
+            index += 1
+            continue
+        elif x[index] in restricted:
+            index += 1
+            continue
+        changed_value = abs(int(x[index]) - int(x[0]))
+        if changed_value == 100:
+            prev_change = 1
+        elif changed_value == 10:
+            prev_change = 2
+        elif changed_value == 1:
+            prev_change = 3
+        results.append(x[index])
+        if int(x[index]) == int(goal):
+            break
+        expanded_nodes.append((x[index],prev_change))
+        count += 1
+        index = 1
 
-    pass
 elif test_name == "IDS":
     #code for IDS
 

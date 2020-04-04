@@ -25,39 +25,119 @@ results = []
 
 #returns the child nodes of n given the previously changed number y [index] ensuring we dont reduce from 0 and increase from 9
 def return_children(n, y):
+    values = []
+    n = n.zfill(3)
     if y == 0:
-        if re.findall("0\d\d",n) or re.findall("9\d\d",n):
-            if re.findall("\d0\d",n) or re.findall("\d9\d",n):
-                if re.findall("\d\d0",n) or re.findall("\d\d9",n):
-                    #We have 1, 2, 3 values invalid
-                    pass
-                else:
-                    #we 1, 2 values invalid
-                    pass
-            else:
-                #we have invalid changed values for first 1 value, need to continue for 3rd value
-                if re.findall("\d\d0",n) or re.findall("\d\d9",n):
-                    pass
-                else:
-                    #we have 1st value invalid
-                    pass
-        else:
+        #able to change all 3 values
+        values.append(n.zfill(3).rstrip("\n"))
+        if re.findall("0\d\d",n):
             pass
-        values = [n - 100, n + 100, n - 10, n + 10, n - 1, n + 1]
+        else:
+            node = str(int(n) - 100)
+            values.append(node.zfill(3))
+        if re.findall("9\d\d",n):
+            pass
+        else:
+            node = str(int(n) + 100)
+            values.append(node.zfill(3))
+        if re.findall("\d0\d",n):
+            pass
+        else:
+            node = str(int(n) - 10)
+            values.append(node.zfill(3))
+        if re.findall("\d9\d",n):
+            pass
+        else:
+            node = str(int(n) + 10)
+            values.append(node.zfill(3))
+        if re.findall("\d\d0",n):
+            pass
+        else:
+            node = str(int(n) - 1)
+            values.append(node.zfill(3))
+        if re.findall("\d\d9",n):
+            pass
+        else:
+            node = str(int(n) + 1)
+            values.append(node.zfill(3))
+
     elif y == 1:
         #do not increase or decrease the first number
-        values = [n - 10, n + 10, n - 1, n + 10]
+        values.append(n.zfill(3).rstrip("\n"))
+        if re.findall("\d0\d",n):
+            pass
+        else:
+            node = str(int(n)-10)
+            values.append(node.zfill(3))
+        if re.findall("\d9\d",n):
+            pass
+        else:
+            node = str(int(n)+10)
+            values.append(node.zfill(3))
+        if re.findall("\d\d0",n):
+            pass
+        else:
+            node = str(int(n)-1)
+            values.append(node.zfill(3))
+        if re.findall("\d\d9",n):
+            pass
+        else:
+            node = str(int(n)+1)
+            values.append(node.zfill(3))
+
     elif y == 2:
         #do not increase or decrease the second number
-        values = [n - 100, n + 100, n - 1, n + 1]
+        values.append(n.zfill(3).rstrip("\n"))
+        if re.findall("0\d\d",n):
+            pass
+        else:
+            node = str(int(n)-100)
+            values.append(node.zfill(3))
+        if re.findall("9\d\d",n):
+            pass
+        else:
+            node = str(int(n)+100)
+            values.append(node.zfill(3))
+        if re.findall("\d\d0",n):
+            pass
+        else:
+            node = str(int(n)-1)
+            values.append(node.zfill(3))
+        if re.findall("\d\d9",n):
+            pass
+        else:
+            node = str(int(n)+1)
+            values.append(node.zfill(3))
     elif y == 3:
         #do not increase or decrease the third number
-        values = [n - 100, n + 100, n - 10, n + 10]
-    node_comparison = values.insert(0,n)
-    expanded_nodes.append(node_comparison)
+        values.append(n.zfill(3).rstrip("\n"))
+        if re.findall("0\d\d",n):
+            pass
+        else:
+            node = str(int(n)-100)
+            values.append(node.zfill(3))
+        if re.findall("9\d\d",n):
+            pass
+        else:
+            node = str(int(n)+100)
+            values.append(node.zfill(3))
+        if re.findall("\d0\d",n):
+            pass
+        else:
+            node = str(int(n)-10)
+            values.append(node.zfill(3))
+        if re.findall("\d9\d",n):
+            pass
+        else:
+            node = str(int(n)+10)
+            values.append(node.zfill(3))
+    expanded_nodes.append(values)
     return values
 
-if test_name == "BFS":
+if test_name == "test":
+    print(return_children(start_value,0))
+
+elif test_name == "BFS":
     #code for BFS
     current_node_expanded = return_children(start_value, 0)
     count += 1

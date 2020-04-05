@@ -20,7 +20,7 @@ restricted = list(restricted_raw.split(","))
 #####################################
 
 count = 0
-expanded_nodes = []
+expanded_nodes = [(start_value.rstrip("\n"),0)]
 results = [start_value.strip("\n")]
 
 #returns the child nodes of n given the previously changed number y [index] ensuring we dont reduce from 0 and increase from 9
@@ -29,7 +29,6 @@ def return_children(n, y):
     n = n.zfill(3)
     if y == 0:
         #able to change all 3 values
-        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("0\d\d",n):
             pass
         else:
@@ -63,7 +62,6 @@ def return_children(n, y):
 
     elif y == 1:
         #do not increase or decrease the first number
-        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("\d0\d",n):
             pass
         else:
@@ -87,7 +85,6 @@ def return_children(n, y):
 
     elif y == 2:
         #do not increase or decrease the second number
-        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("0\d\d",n):
             pass
         else:
@@ -110,7 +107,6 @@ def return_children(n, y):
             values.append(node.zfill(3))
     elif y == 3:
         #do not increase or decrease the third number
-        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("0\d\d",n):
             pass
         else:
@@ -177,12 +173,21 @@ def check_expanded(x,y):
 
 if test_name == "BFS":
     #code for BFS
-    current_node_expanded = return_children(start_value, 0)
-    count += 1
+    #dont generate the children everytime and keep track of the length of the original children creation - only iterate down once thats done
+    prev_change= 0
+    index = 0
     while count <= 1000:
-
-
-        count += 1
+        while index < len(results):
+            if (results[i],prev_change) in expanded_nodes:
+                x = return_children(results,[i],prev_change)
+                for i in x:
+                    results.insert(index,i)
+                index += len(x)
+            else:
+                expanded_nodes.append(i,prev_change)
+                count += 1
+            if index + 1 = len(results):
+                index = 0
 
 elif test_name == "DFS":
     #code for DFS - left most and continue down until you find a repeated node

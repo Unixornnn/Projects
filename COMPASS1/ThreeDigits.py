@@ -11,17 +11,22 @@ file = open(filename, "r")
 #from the file import in the start state, end state and restricted values
 start_value = file.readline()
 goal = file.readline()
-restricted_raw = file.readline()
+restricted_raw = file.read()
 #make it so that the restricted values are in a list instead of a string
-restricted = list(restricted_raw.split(","))
+restricted_split = list(restricted_raw.split(", "))
+restricted = []
+for i in restricted_split:
+    restricted.append(i.strip())
 
 #troubleshooting area
 
 #####################################
 
 count = 0
-expanded_nodes = [(start_value.rstrip("\n"),0)]
+#expanded_nodes = [(start_value.rstrip("\n"),0)]
+expanded_nodes = [start_value.rstrip("\n") + "0"]
 results = [start_value.strip("\n")]
+success = False
 
 #returns the child nodes of n given the previously changed number y [index] ensuring we dont reduce from 0 and increase from 9
 def return_children(n, y):
@@ -29,6 +34,7 @@ def return_children(n, y):
     n = n.zfill(3)
     if y == 0:
         #able to change all 3 values
+        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("0\d\d",n):
             pass
         else:
@@ -62,6 +68,7 @@ def return_children(n, y):
 
     elif y == 1:
         #do not increase or decrease the first number
+        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("\d0\d",n):
             pass
         else:
@@ -85,6 +92,7 @@ def return_children(n, y):
 
     elif y == 2:
         #do not increase or decrease the second number
+        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("0\d\d",n):
             pass
         else:
@@ -107,6 +115,7 @@ def return_children(n, y):
             values.append(node.zfill(3))
     elif y == 3:
         #do not increase or decrease the third number
+        values.append(n.zfill(3).rstrip("\n"))
         if re.findall("0\d\d",n):
             pass
         else:
@@ -127,7 +136,6 @@ def return_children(n, y):
         else:
             node = str(int(n)+10)
             values.append(node.zfill(3))
-    expanded_nodes.append((values[0],y))
     return values
 
 def lowest_heuristic_index(x, y):
@@ -137,7 +145,7 @@ def lowest_heuristic_index(x, y):
     i = 0
     value = []
     while i < len(x):
-        if x[i] in restricted:
+        if str(x[i]) in restricted:
             value.append(1000)
         elif (x[i],y) in expanded_nodes:
             value.append(1000)
@@ -175,32 +183,36 @@ if test_name == "BFS":
     #code for BFS
     #dont generate the children everytime and keep track of the length of the original children creation - only iterate down once thats done
     prev_change= 0
-    index = 0
-    while count <= 1000:
-        while index < len(results):
-            if (results[i],prev_change) in expanded_nodes:
-                x = return_children(results,[i],prev_change)
-                for i in x:
-                    results.insert(index,i)
-                index += len(x)
-            else:
-                expanded_nodes.append(i,prev_change)
-                count += 1
-            if index + 1 = len(results):
-                index = 0
+    index = 1
+    count = 0
+    while count < 1000:
+        if index + 1 == len(results):
+            index = 0
+            continue
+        if (results[index],prev_change) in expanded_nodes:
+            x = return_children(results[index],prev_change)
+            for i in x:
+                results.insert(index,i)
+            index += len(x)
+        else:
+            #expanded_nodes.append((results[index],prev_change))
+            expanded_nodes.append(results[index] + str(prev_change))
+            count += 1
+        count += 1
 
 elif test_name == "DFS":
     #code for DFS - left most and continue down until you find a repeated node
     count = 0
     prev_change = 0
     index = 1
+    pointer = 0
     while count <= 1000:
-        x = return_children(results[count], prev_change)
-        if x[index] in expanded_nodes:
-            index += 1
-            continue
-        elif x[index] in restricted:
-            index += 1
+        x = return_children(results[pointer], prev_change)
+        #an issue with some of the test cases in which we arrive at no conclusion, by going down left
+        # need a method of going back up the tree to recurse down a different side
+        # if cannot find - simply change the below if statement to return a false result: no solution found
+        if index >= len(x):
+            pointer = 0
             continue
         changed_value = abs(int(x[index]) - int(x[0]))
         if changed_value == 100:
@@ -209,10 +221,21 @@ elif test_name == "DFS":
             prev_change = 2
         elif changed_value == 1:
             prev_change = 3
+        node = x[index] + str(prev_change)
+        if node in expanded_nodes:
+            index += 1
+            continue
+        elif x[index] in restricted:
+            index += 1
+            continue
+        else:
+            #expanded_nodes.append((x[index],prev_change))
+            expanded_nodes.append(x[index] + str(prev_change))
         results.append(x[index])
         if int(x[index]) == int(goal):
+            success = True
             break
-        expanded_nodes.append((x[index],prev_change))
+        pointer += 1
         count += 1
         index = 1
 
@@ -220,6 +243,7 @@ elif test_name == "IDS":
     #code for IDS
 
     pass
+
 elif test_name == "Greedy":
     count = 0
     prev_change = 0
@@ -233,15 +257,17 @@ elif test_name == "Greedy":
             prev_change = 2
         elif changed_value == 1:
             prev_change = 3
-        results.append(x[y])
-        if int(x[y]) == int(goal):
+        if x[y] == results[count]:
+            success = False
             break
-        expanded_nodes.append((x[y],prev_change))
+        results.append(x[y])
+        #expanded_nodes.append((x[y],prev_change))
+        expanded_nodes.append(x[y] + str(prev_change))
+        if int(x[y]) == int(goal):
+            success = True
+            break
         count += 1
 
-    #code for Greedy
-
-    pass
 elif test_name == "A*":
     #code for A*
 
@@ -255,3 +281,7 @@ else:
     print("error: the test defined is not found within this program.")
 
 print(results)
+if success == True:
+    pass
+else:
+    print("No solution found.")

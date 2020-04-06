@@ -204,40 +204,38 @@ elif test_name == "DFS":
     #code for DFS - left most and continue down until you find a repeated node
     count = 0
     prev_change = 0
-    index = 1
-    pointer = 0
+    index = 0
+    nodes = []
+    x = return_children(start_value, prev_change)
+    for i in x:
+        nodes.append(i)
     while count <= 1000:
-        x = return_children(results[pointer], prev_change)
-        #an issue with some of the test cases in which we arrive at no conclusion, by going down left
-        # need a method of going back up the tree to recurse down a different side
-        # if cannot find - simply change the below if statement to return a false result: no solution found
-        if index >= len(x):
-            pointer = 0
-            continue
-        changed_value = abs(int(x[index]) - int(x[0]))
+        changed_value = abs(int(nodes[index]) - int(nodes[0]))
         if changed_value == 100:
             prev_change = 1
         elif changed_value == 10:
             prev_change = 2
         elif changed_value == 1:
             prev_change = 3
-        node = x[index] + str(prev_change)
+        node = nodes[index] + str(prev_change)
         if node in expanded_nodes:
             index += 1
             continue
-        elif x[index] in restricted:
+        elif node[0:3] in restricted:
             index += 1
             continue
         else:
-            #expanded_nodes.append((x[index],prev_change))
-            expanded_nodes.append(x[index] + str(prev_change))
-        results.append(x[index])
-        if int(x[index]) == int(goal):
-            success = True
-            break
-        pointer += 1
-        count += 1
-        index = 1
+            expanded_nodes.append(node)
+            count += 1
+            if int(nodes[index]) == int(goal):
+                success = True
+                break
+            x = return_children(node[0:3],node[3])
+            nodes = (nodes[0:index + 1] + x[0:] + nodes[index + 2:])
+            index = 0
+            continue
+
+
 
 elif test_name == "IDS":
     #code for IDS
@@ -245,6 +243,7 @@ elif test_name == "IDS":
     pass
 
 elif test_name == "Greedy":
+    #FINISHED
     count = 0
     prev_change = 0
     while count <= 1000:
@@ -273,15 +272,48 @@ elif test_name == "A*":
 
     pass
 elif test_name == "Hill-climbing":
+    #FINISHED
     #code for Hill-climbing
     #implement a value which gives the number of digits that are in the correct position, seeking to increase this number with each move, or at least not decrease
+    count = 0
+    prev_change = 0
+    while count <= 1000:
+        x = return_children(results[count], prev_change)
+        y = lowest_heuristic_index(x,prev_change)
+        changed_value = abs(int(x[y]) - int(x[0]))
+        if changed_value == 100:
+            prev_change = 1
+        elif changed_value == 10:
+            prev_change = 2
+        elif changed_value == 1:
+            prev_change = 3
+        original_value = x[0]
+        new_value = x[y]
+        original_heuristic = ((abs(int(original_value[0]) - int(goal[0]))) + (abs(int(original_value[1]) - int(goal[1]))) + (abs(int(original_value[2]) - int(goal[2]))))
+        new_heuristic = ((abs(int(new_value[0]) - int(goal[0]))) + (abs(int(new_value[1]) - int(goal[1]))) + (abs(int(new_value[2]) - int(goal[2]))))
+        if new_heuristic < original_heuristic:
+            expanded_nodes.append(x[y] + str(prev_change))
+            results.append(x[y])
+            count += 1
+            if int(x[y]) == int(goal):
+                success = True
+                break
+        else:
+            success == False
+            break
 
-    pass
 else:
     print("error: the test defined is not found within this program.")
 
-print(results)
 if success == True:
     pass
 else:
     print("No solution found.")
+
+i = 0
+while i < len(results):
+    if i + 1 == len(results):
+        print(results[i])
+    else:
+        print(results[i],end = ', ')
+    i += 1

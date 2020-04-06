@@ -1,0 +1,37 @@
+elif test_name == "DFS":
+    #code for DFS - left most and continue down until you find a repeated node
+    count = 0
+    prev_change = 0
+    index = 1
+    pointer = 0
+    nodes = []
+    while count <= 1000:
+        x = return_children(results[pointer], prev_change)
+        #an issue with some of the test cases in which we arrive at no conclusion, by going down left
+        # need a method of going back up the tree to recurse down a different side
+        # if cannot find - simply change the below if statement to return a false result: no solution found
+        if index >= len(x):
+            break
+        changed_value = abs(int(x[index]) - int(x[0]))
+        if changed_value == 100:
+            prev_change = 1
+        elif changed_value == 10:
+            prev_change = 2
+        elif changed_value == 1:
+            prev_change = 3
+        node = x[index] + str(prev_change)
+        if node in expanded_nodes:
+            index += 1
+            continue
+        elif x[index] in restricted:
+            index += 1
+            continue
+        else:
+            expanded_nodes.append(x[index] + str(prev_change))
+        results.append(x[index])
+        if int(x[index]) == int(goal):
+            success = True
+            break
+        pointer += 1
+        count += 1
+        index = 1

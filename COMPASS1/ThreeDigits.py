@@ -25,6 +25,7 @@ for i in restricted_split:
 count = 0
 #expanded_nodes = [(start_value.rstrip("\n"),0)]
 expanded_nodes = [start_value.rstrip("\n") + "0"]
+bfs_expanded = [start_value.strip()]
 results = [start_value.strip("\n")]
 success = False
 
@@ -179,26 +180,69 @@ def check_expanded(x,y):
         else:
             return False
 
+def get_heuristic(n,m):
+    first_value = abs(n[0] - m[0])
+    second_value = abs(n[1] - m[1])
+    third_value = abs(n[2] - m[2])
+    final_value = first_value + second_value + third_value
+    return final_value
+
 if test_name == "BFS":
-    #code for BFS
-    #dont generate the children everytime and keep track of the length of the original children creation - only iterate down once thats done
-    prev_change= 0
-    index = 1
-    count = 0
-    while count < 1000:
-        if index + 1 == len(results):
-            index = 0
-            continue
-        if (results[index],prev_change) in expanded_nodes:
-            x = return_children(results[index],prev_change)
-            for i in x:
-                results.insert(index,i)
-            index += len(x)
+    count = 1
+    prev_change = 0
+    second = []
+    results = [start_value.strip()]
+    index = 0
+    x = return_children(start_value,0)
+    while count <= 1000:
+        if count == 1:
+            for i in x[1:]:
+                results.append(i)
+                changed_value = abs(int(i) - int(x[0]))
+                if changed_value == 100:
+                    prev_change = 1
+                elif changed_value == 10:
+                    prev_change = 2
+                elif changed_value == 1:
+                    prev_change = 3
+                if i in restricted:
+                    continue
+                elif (str(i) + str(prev_change)) in expanded_nodes:
+                    continue
+                elif int(i) == int(goal):
+                    success = True
+                    break
+                    break
+                second.append(return_children(i,prev_change))
+                count += 1
         else:
-            #expanded_nodes.append((results[index],prev_change))
-            expanded_nodes.append(results[index] + str(prev_change))
-            count += 1
-        count += 1
+            for i in x:
+                if success == True:
+                    break
+                for a in i[1:]:
+                    if success == True:
+                        break
+                    changed_value = abs(int(a) - int(i[0]))
+                    if changed_value == 100:
+                        prev_change = 1
+                    elif changed_value == 10:
+                        prev_change = 2
+                    elif changed_value == 1:
+                        prev_change = 3
+                    if a in restricted:
+                        continue
+                    elif (str(a) + str(prev_change)) in expanded_nodes:
+                        continue
+                    results.append(a)
+                    if int(a) == int(goal):
+                        success = True
+                        break
+                    expanded_nodes.append(str(a) + str(prev_change))
+                    second.append(return_children(a,prev_change))
+                    count += 1
+        x = second
+        if success == True:
+            break
 
 elif test_name == "DFS":
     #code for DFS - left most and continue down until you find a repeated node
@@ -235,8 +279,6 @@ elif test_name == "DFS":
             index = 0
             continue
 
-
-
 elif test_name == "IDS":
     #code for IDS
 
@@ -268,9 +310,39 @@ elif test_name == "Greedy":
         count += 1
 
 elif test_name == "A*":
+    values = []
+    heuristic_values = []
+    node = start_value
+    current = 0
+    count = 0
+    prev_change
+    minimum = 1000
+    depth = 0
+    while count <= 1000:
+        x = return_children(node[0:3],node[4])
+        for i in x[1:]:
+            changed_value = abs(int(x[y]) - int(x[0]))
+            if changed_value == 100:
+                prev_change = 1
+            elif changed_value == 10:
+                prev_change = 2
+            elif changed_value == 1:
+                prev_change = 3
+            values.append((str(node) + str(depth) + str(prev_change))
+        for i in values:
+            heuristic = get_heuristic(i) + i[3]
+            heuristic_values.append(heuristic)
+        for i in heuristic_values:
+            if i < minimum:
+                current = i
+            else:
+                continue
+        index = heuristic_values.index(current)
+        node = values[index]
+        if node in expanded_nodes:
+            
     #code for A*
 
-    pass
 elif test_name == "Hill-climbing":
     #FINISHED
     #code for Hill-climbing
@@ -306,14 +378,12 @@ else:
     print("error: the test defined is not found within this program.")
 
 if success == True:
-    pass
+    #insert the direct path print here
+    for i in results:
+        if results.index(i) == len(results) - 1:
+            print(i)
+        else:
+            print(i,end = ', ')
 else:
     print("No solution found.")
-
-i = 0
-while i < len(results):
-    if i + 1 == len(results):
-        print(results[i])
-    else:
-        print(results[i],end = ', ')
-    i += 1
+    print(results)

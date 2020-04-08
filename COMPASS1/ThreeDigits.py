@@ -308,14 +308,15 @@ elif test_name == "A*":
     pass
     #code for A*
 
-elif test_name == "Hill-climbing":
+elif test_name == "Hill-Climbing":
     count = 0
     prev_change = 0
     posneg = 0
     while count <= 1000:
         x = return_children(results[count], prev_change)
-        original = x.pop(x[0])
-        y = lowest_heuristic_index(x,prev_change)
+        original = x[0]
+        x.remove(x[0])
+        y = lowest_heuristic_index(x, prev_change)
         changed_value = int(x[y]) - int(original)
         if changed_value == 100:
             prev_change = 1
@@ -335,9 +336,8 @@ elif test_name == "Hill-climbing":
         elif changed_value == -1:
             prev_change = 3
             posneg = 0
-        original_value = x[0]
         new_value = x[y]
-        original_heuristic = ((abs(int(original_value[0]) - int(goal[0]))) + (abs(int(original_value[1]) - int(goal[1]))) + (abs(int(original_value[2]) - int(goal[2]))))
+        original_heuristic = ((abs(int(original[0]) - int(goal[0]))) + (abs(int(original[1]) - int(goal[1]))) + (abs(int(original[2]) - int(goal[2]))))
         new_heuristic = ((abs(int(new_value[0]) - int(goal[0]))) + (abs(int(new_value[1]) - int(goal[1]))) + (abs(int(new_value[2]) - int(goal[2]))))
         if new_heuristic < original_heuristic:
             greedy_expanded.append(x[y] + str(prev_change))
@@ -357,7 +357,7 @@ else:
 
 if success == True:
     #insert the direct path print here
-    if test_name == "Greedy":
+    if test_name == "Greedy" or test_name == "Hill-Climbing":
         for i in results:
             if results.index(i) == len(results) - 1:
                 print(i)

@@ -22,7 +22,6 @@ for i in restricted_split:
 
 #####################################
 
-
 count = 0
 expanded_nodes = [start_value.rstrip("\n") + "0" + "0"]
 greedy_expanded = [start_value.rstrip("\n") + "0"]
@@ -355,6 +354,7 @@ else:
 
 #below is how my code handles the values generated in the tests above
 
+
 if success == True:
     #insert the direct path print here
     if test_name == "Greedy" or test_name == "Hill-Climbing":
@@ -378,7 +378,7 @@ if success == True:
                         if final[0] == final[1]:
                             finished = True
                             break
-                    final.insert(0,value)
+                    final.insert(0,str(value).zfill(3))
                     if posneg == 1:
                         #means we added 1 to get to this number, therefore we need to subtract to get new goal
                         if changed_value == 1:
@@ -399,7 +399,6 @@ if success == True:
                     pass
             if finished == True:
                 break
-
     #correct formatting for printing the above values (final)
         for i in final[1:]:
             if final.index(i) == len(final) - 1:
